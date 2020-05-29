@@ -88,8 +88,7 @@ class Trainer(object):
         super().__init__()
         self.logger = logger
         self.data = None
-        self.device = torch.device("cuda" if torch.cuda.
-                                   is_available() else "cpu")
+        self.device = util.get_device()
         self.model = None
         self.optimizer = None
         self.min_lr = 0

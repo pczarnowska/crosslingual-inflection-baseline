@@ -1,19 +1,20 @@
 import torch
 import numpy as np
+from util import get_device, BOS, EOS, PAD, UNK, PAD_IDX, BOS_IDX, EOS_IDX, UNK_IDX
 
-BOS = '<s>'
-EOS = '<\s>'
-PAD = '<PAD>'
-UNK = '<UNK>'
-PAD_IDX = 0
-BOS_IDX = 1
-EOS_IDX = 2
-UNK_IDX = 3
+# BOS = '<s>'
+# EOS = '<\s>'
+# PAD = '<PAD>'
+# UNK = '<UNK>'
+# PAD_IDX = 0
+# BOS_IDX = 1
+# EOS_IDX = 2
+# UNK_IDX = 3
 
 
 class Dataloader(object):
     def __init__(self):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = get_device()
 
 
 class Seq2SeqDataLoader(Dataloader):

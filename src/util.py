@@ -6,11 +6,19 @@ import sys
 from collections import namedtuple
 from enum import Enum
 from functools import partial
+import torch
 
 import numpy as np
 from tqdm import tqdm
 
-from dataloader import BOS_IDX, EOS_IDX
+BOS = '<s>'
+EOS = '<\s>'
+PAD = '<PAD>'
+UNK = '<UNK>'
+PAD_IDX = 0
+BOS_IDX = 1
+EOS_IDX = 2
+UNK_IDX = 3
 
 tqdm = partial(tqdm, bar_format='{l_bar}{r_bar}')
 
@@ -18,6 +26,21 @@ tqdm = partial(tqdm, bar_format='{l_bar}{r_bar}')
 class NamedEnum(Enum):
     def __str__(self):
         return self.value
+
+# from https://discuss.pytorch.org/t/it-there-anyway-to-let-program-select-free-gpu-automatically/17560/6
+def get_free_gpu():
+    os.system('nvidia-smi -q -d Memory |grep -A4 GPU|grep Free >tmp')
+    memory_available = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
+    idx = np.argmax(memory_available)
+    print("Using GPU with id:", idx)
+    return idx
+
+def get_device():
+    if torch.cuda.is_available():
+        idx = get_free_gpu()
+        return torch.device(f"cuda:{idx}")
+    else:
+        return torch.device("cpu")
 
 
 def log_grad_norm(self, grad_input, grad_output, logger=None):

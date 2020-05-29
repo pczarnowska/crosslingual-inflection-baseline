@@ -8,7 +8,7 @@ import torch
 
 from dataloader import BOS, EOS, UNK_IDX
 from model import decode_beam_search, decode_greedy
-from util import maybe_mkdir
+from util import maybe_mkdir, get_device
 
 
 def get_args():
@@ -65,7 +65,7 @@ def main():
 
     decode_fn = setup_inference(opt)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = get_device()
     model = torch.load(open(opt.model, mode='rb'), map_location=device)
     model = model.to(device)
 

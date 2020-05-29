@@ -7,12 +7,10 @@ from functools import partial
 import torch
 import regex as re
 
-from dataloader import BOS, EOS, UNK_IDX
 from model import decode_beam_search, decode_greedy
-from util import maybe_mkdir
+from util import maybe_mkdir, get_device, BOS, EOS, UNK_IDX, BOS_IDX, EOS_IDX
 from tqdm import tqdm
 tqdm = partial(tqdm, bar_format='{l_bar}{r_bar}')
-from dataloader import BOS_IDX, EOS_IDX
 
 
 def setup_inference(max_len=30, beam_size=3, decode='beam', nonorm=False):
@@ -72,7 +70,7 @@ def reinflect_form(model, device, decode_fn, tag, pos, lemma):
 
 def reinflect(model_source, lemmas, tags, poses, multi=False):
     decode_fn = setup_inference()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = get_device()
     model = torch.load(open(model_source, mode='rb'), map_location=device)
     model = model.to(device)
 
