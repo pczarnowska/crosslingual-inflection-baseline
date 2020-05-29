@@ -210,16 +210,17 @@ class SIGMORPHON2019Task1(Seq2SeqDataLoader):
         return source, target
 
     def read_file(self, file):
-        if 'train' in file:
-            lang_tag = [file.split('/')[-1].split('-train')[0]]
-        elif 'dev' in file:
-            lang_tag = [file.split('/')[-1].split('-dev')[0]]
-        else:
-            raise ValueError
+        # if 'train' in file:
+        #     lang_tag = [file.split('/')[-1].split('-train')[0]]
+        # elif 'dev' in file:
+        #     lang_tag = [file.split('/')[-1].split('-dev')[0]]
+        # else:
+        #    raise ValueError
+
         with open(file, 'r', encoding='utf-8') as fp:
             for line in fp.readlines():
                 lemma, word, tags = line.strip().split('\t')
-                yield list(lemma), list(word), lang_tag + tags.split(';')
+                yield list(lemma), list(word), tags.split(';') #lang_tag + tags.split(';')
 
     def _iter_helper(self, file):
         if not isinstance(file, list):
