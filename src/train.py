@@ -103,7 +103,7 @@ class Trainer(object):
         logger = self.logger
         # yapf: disable
         if dataset == Data.sigmorphon19task1:
-            assert isinstance(train, list) and len(train) == 2
+            assert isinstance(train, list) #and len(train) == 2
             self.data = dataloader.TagSIGMORPHON2019Task1(train, dev, test, shuffle)
         elif dataset == Data.sigmorphon19task2:
             assert isinstance(train, list) and len(train) == 1
