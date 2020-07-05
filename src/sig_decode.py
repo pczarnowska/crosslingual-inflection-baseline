@@ -13,7 +13,7 @@ from tqdm import tqdm
 tqdm = partial(tqdm, bar_format='{l_bar}{r_bar}')
 
 
-def setup_inference(max_len=30, beam_size=3, decode='beam', nonorm=False):
+def setup_inference(max_len=30, beam_size=3, decode='greedy', nonorm=False):
     decode_fn = None
     if decode == 'greedy':
         decode_fn = partial(decode_greedy, max_len=max_len)
@@ -53,13 +53,16 @@ def reinflect_form(model, device, decode_fn, tag, pos, lemma):
     lemma_feats = {"V": "NFIN",
                     "ADJ": "SG+MASC+NOM",
                     "V.PTCP": "SG+MASC+NOM",
-                    "N": "SG+NOM"]
+                    "N": "SG+NOM"}
 
     trg_i2c = {i: c for c, i in model.trg_c2i.items()}
     decode_trg = lambda seq: [trg_i2c[i] for i in seq]
 
     if pos in lemma_feats and all([y.lower() in tag.lower() for y in lemma_feats[pos].split("+")]):
-        return lemma
+        if pos == "V.PTCP" and len(lemma) > 0 and lemma[-1] == "ć":
+            pass
+        else:
+            return lemma
 
     tag_splits = tag.split(';')
     src = encode(model, lemma, tag_splits, device)
@@ -81,11 +84,11 @@ def reinflect(model_source, lemmas, tags, poses, multi=False):
         if multi or isinstance(tag, list): # we need to inflect many times
             preds = set()
             for t in tag:
-                pred_out = reinflect_form(model, device, decode_fn, t, pos, lemma, lemma_feats)
+                pred_out = reinflect_form(model, device, decode_fn, t, pos, lemma)
                 preds.add(pred_out)
             forms.append(list(preds))
         else:
-            pred_out = reinflect_form(model, device, decode_fn, tag, pos, lemma, lemma_feats)
+            pred_out = reinflect_form(model, device, decode_fn, tag, pos, lemma)
             forms.append(f"{pred_out}")
     return forms
 
